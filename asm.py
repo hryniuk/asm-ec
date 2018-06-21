@@ -11,6 +11,7 @@ OP_CODES = dict(
 RS = {'SVC'}
 
 Instruction = namedtuple('Instruction', ('opcode', 'operands'))
+DataTriple = namedtuple('DataTriple', ('count', 'address', 'data'))
 
 
 def parse_line(line: str) -> Instruction:
