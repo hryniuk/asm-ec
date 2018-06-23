@@ -24,6 +24,21 @@ def read_source(file_object) -> List[str]:
     return list(parse_line(l.strip()) for l in file_object.readlines())
 
 
+def to_data_triples(instruction, previous_address=0):
+    data_triples = []
+    if instruction.opcode in RS:
+        r1, address = map(lambda x: int(x, 0), instruction.operands[0].split())
+        r2 = int(instruction.operands[1])
+        address_left, address_right = address >> 8, (address & 0xff)
+        data_triples.append(
+            DataTriple(1, previous_address + 1, instruction.opcode))
+        data_triples.append(DataTriple(1, previous_address + 2, (r1 << 4) | r2))
+        data_triples.append(DataTriple(1, previous_address + 3, address_left))
+        data_triples.append(DataTriple(1, previous_address + 4, address_right))
+
+    return data_triples
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Convert EC assembly to an ALF')
