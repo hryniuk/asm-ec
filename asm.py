@@ -19,9 +19,8 @@ def parse_line(line: str) -> Instruction:
     return Instruction(OP_CODES[instruction_name], operands)
 
 
-def read_source(filepath) -> List[Instruction]:
-    with open(filepath, 'r') as f:
-        return list(parse_line(l) for l in f.readlines())
+def read_source(file_object) -> List[str]:
+    return list(parse_line(l.strip()) for l in file_object.readlines())
 
 
 if __name__ == '__main__':
