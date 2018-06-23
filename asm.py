@@ -26,9 +26,13 @@ def read_source(file_object) -> List[str]:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Convert EC assembly to an ALF')
-    parser.add_argument('file',
-                        help="assembly file's path")
+    parser.add_argument('--asm-file',
+                        help="assembly file's path",
+                        required=False)
 
     args = parser.parse_args()
-
-    print(read_source(args.file))
+    try:
+        with open(args.asm_file) as f:
+            print(read_source(f))
+    except:
+        pass
