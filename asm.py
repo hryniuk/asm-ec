@@ -1,4 +1,5 @@
 import argparse
+import sys
 from collections import namedtuple
 from typing import List, NewType, Type
 
@@ -34,5 +35,8 @@ if __name__ == '__main__':
     try:
         with open(args.asm_file) as f:
             print(read_source(f))
-    except:
-        pass
+            sys.exit(0)
+    except FileNotFoundError:
+        print(f"No such file: {args.asm_file}")
+    except TypeError:
+        print(read_source(sys.stdin))
