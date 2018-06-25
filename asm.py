@@ -10,7 +10,7 @@ OP_CODES = dict(
     SVC=0x2e,
 )
 
-RS = {'SVC'}
+RS = {0x2e}
 
 Instruction = namedtuple('Instruction', ('opcode', 'operands'))
 
@@ -20,7 +20,7 @@ def parse_line(line: str) -> Instruction:
     return Instruction(OP_CODES[instruction_name], operands)
 
 
-def read_source(file_object) -> List[str]:
+def read_source(file_object) -> List[Instruction]:
     return list(parse_line(l.strip()) for l in file_object.readlines())
 
 
@@ -49,9 +49,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
     try:
         with open(args.asm_file) as f:
-            print(read_source(f))
+            print(list(map(to_data_triples, read_source(f))))
             sys.exit(0)
     except FileNotFoundError:
         print(f"No such file: {args.asm_file}")
     except TypeError:
-        print(read_source(sys.stdin))
+        print(list(map(to_data_triples, read_source(sys.stdin))))
