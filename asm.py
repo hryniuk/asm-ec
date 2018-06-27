@@ -35,6 +35,12 @@ def to_data_triples(instruction, previous_address=-1):
     return None
 
 
+def generate_record(data_triples, index=0):
+    raw_record = f"{index}{''.join(map(str, data_triples))}"
+    checksum = sum(map(lambda x: int(x, 16), raw_record)) % 16
+    return f"{checksum:x}{raw_record}".upper()
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Convert EC assembly to an ALF')
