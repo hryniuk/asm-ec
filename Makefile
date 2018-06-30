@@ -9,7 +9,7 @@ SOURCEDIR     = source
 BUILDDIR      = build
 
 test:
-	pytest
+	pycodestyle asm.py && pytest
 
 # Put it first so that "make" without argument is like "make help".
 help:
