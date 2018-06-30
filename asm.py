@@ -41,6 +41,20 @@ def generate_record(data_triples, index=0):
     return f"{checksum:x}{raw_record}".upper()
 
 
+# TODO: optimize ALF generation by:
+#  - scanning all records and joining contiguous memory segments
+#  - removing duplicates
+def data_triples_to_alf(data_triples):
+    # TODO: split data triples into several records
+    alf = generate_record(data_triples)
+    assert len(alf) <= 80
+
+    alf += "\n"
+    alf += f"END{START_ADDRESS:04x}"
+
+    return alf.upper()
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Convert EC assembly to an ALF')
@@ -49,11 +63,14 @@ if __name__ == '__main__':
                         required=False)
 
     args = parser.parse_args()
+    source = None
     try:
         with open(args.asm_file) as f:
-            print(list(map(to_data_triples, read_source(f))))
-            sys.exit(0)
+            source = read_source(f)
     except FileNotFoundError:
         print(f"No such file: {args.asm_file}")
     except TypeError:
-        print(list(map(to_data_triples, read_source(sys.stdin))))
+        source = read_source(sys.stdin)
+
+    assert source is not None
+    print(data_triples_to_alf(map(to_data_triples, source)))
