@@ -12,6 +12,9 @@ class DataTriple:
         return tuple([self.count, self.address, self.data]) \
                == tuple([other.count, other.address, other.data])
 
-    def __str__(self):
+    def __repr__(self):
         data_str = ''.join(f"{a:02x}" for a in self.data)
         return f"{self.count:01x}{self.address:04x}{data_str}"
+
+    def __str__(self):
+        return repr(self)
