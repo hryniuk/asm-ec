@@ -1,4 +1,5 @@
 import argparse
+import functools
 import sys
 from collections import namedtuple
 from typing import List, NewType, Type
@@ -8,9 +9,11 @@ START_ADDRESS = 0xa
 
 OP_CODES = dict(
     SVC=0x2e,
+    LI=0x40,
 )
 
 RS = {0x2e}
+IM = {0x40}
 
 Instruction = namedtuple('Instruction', ('opcode', 'operands'))
 
@@ -20,10 +23,16 @@ def parse_line(line: str) -> Instruction:
     return Instruction(OP_CODES[instruction_name], operands)
 
 
+# TODO: rename to read_instructions
 def read_source(file_object) -> List[Instruction]:
     return list(parse_line(l.strip()) for l in file_object.readlines())
 
 
+class UnsupportedOpCode(Exception):
+    pass
+
+
+# TODO: rethink parameters
 def to_data_triples(instruction, previous_address=-1):
     if instruction.opcode in RS:
         r1, address = map(lambda x: int(x, 0), instruction.operands[0].split())
@@ -31,9 +40,12 @@ def to_data_triples(instruction, previous_address=-1):
         address_left, address_right = address >> 8, (address & 0xff)
         data = [instruction.opcode,
                 (r1 << 4) | r2, address_left, address_right]
-        return DataTriple(4, previous_address + 1, data)
-
-    return None
+    elif instruction.opcode in IM:
+        r1, value = map(lambda x: int(x, 0), instruction.operands[0].split())
+        data = [instruction.opcode, r1 << 4 | (value & 0xf0000), value & 0xffff]
+    else:
+        raise UnsupportedOpCode(f"{instruction.opcode} is not supported")
+    return DataTriple(len(data), previous_address + 1, data)
 
 
 def generate_record(data_triples, index=0):
@@ -74,4 +86,5 @@ if __name__ == '__main__':
         source = read_source(sys.stdin)
 
     assert source is not None
-    print(data_triples_to_alf(map(to_data_triples, source)))
+    parse = functools.partial(to_data_triples, previous_address=0xf)
+    print(data_triples_to_alf(map(parse, source)))

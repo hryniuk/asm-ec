@@ -6,3 +6,8 @@ def test_instruction_is_converted_properly():
     converted = asm.to_data_triples(svc_instruction)
     expected = asm.DataTriple(4, 0, [0x2e, (0x01 << 4) | 0x01, 0x00, 0x00])
     assert expected == converted
+
+
+def test_data_triple_is_formatted_correctly():
+    dt = asm.DataTriple(4, 0, [0x2e, 0x05 << 4, 0x00, 0x20])
+    assert str(dt) == '400002e500020'
