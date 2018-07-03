@@ -42,7 +42,9 @@ def to_data_triples(instruction, previous_address=-1):
                 (r1 << 4) | r2, address_left, address_right]
     elif instruction.opcode in IM:
         r1, value = map(lambda x: int(x, 0), instruction.operands[0].split())
-        data = [instruction.opcode, r1 << 4 | (value & 0xf0000), value & 0xffff]
+        data = [instruction.opcode, r1 << 4 | (value & 0xf0000),
+                value & 0xff00,
+                value & 0xff]
     else:
         raise UnsupportedOpCode(f"{instruction.opcode} is not supported")
     return DataTriple(len(data), previous_address + 1, data)
