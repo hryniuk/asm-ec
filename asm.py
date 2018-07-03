@@ -57,15 +57,20 @@ def generate_record(data_triples, index=0):
 # TODO: optimize ALF generation by:
 #  - scanning all records and joining contiguous memory segments
 #  - removing duplicates
+# TODO: make it work for many data triples
 def data_triples_to_alf(data_triples):
     # TODO: split data triples into several records
-    alf = generate_record(data_triples)
-    assert len(alf) <= 80
+    alf_lines = []
+    try:
+        record_line = generate_record(data_triples)
+        assert len(record_line) <= 80
+        alf_lines.append(record_line)
+    except:
+        pass
 
-    alf += "\n"
-    alf += f"END{START_ADDRESS:04x}"
+    alf_lines.append(f"END{START_ADDRESS:04x}")
 
-    return alf.upper()
+    return '\n'.join(alf_lines).upper()
 
 
 if __name__ == '__main__':
@@ -86,5 +91,13 @@ if __name__ == '__main__':
         source = read_source(sys.stdin)
 
     assert source is not None
-    parse = functools.partial(to_data_triples, previous_address=0xf)
-    print(data_triples_to_alf(map(parse, source)))
+    # TODO: refactor it and write test
+    start_address = 0xf
+    data_triples = []
+    for instr in source:
+        dt = to_data_triples(instr, start_address)
+        data_triples.append(dt)
+        start_address += dt.count
+        start_address += int(start_address % 2 == 0)
+
+    print(data_triples_to_alf(data_triples))
