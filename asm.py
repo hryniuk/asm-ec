@@ -67,8 +67,8 @@ def data_triples_to_alf(data_triples):
         record_line = generate_record(data_triples)
         assert len(record_line) <= 80
         alf_lines.append(record_line)
-    except:
-        pass
+    except Exception as e:
+        print("{}".format(e))
 
     alf_lines.append(f"END{START_ADDRESS:04x}")
 
