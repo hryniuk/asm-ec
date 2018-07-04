@@ -32,11 +32,19 @@ class UnsupportedOpCode(Exception):
     pass
 
 
+class InvalidInstruction(Exception):
+    pass
+
+
 # TODO: rethink parameters
 def to_data_triples(instruction, previous_address=-1):
     if instruction.opcode in RS:
         r1, address = map(lambda x: int(x, 0), instruction.operands[0].split())
         r2 = int(instruction.operands[1])
+        if not (r1 < 0x10 and r2 < 0x10):
+            raise InvalidInstruction(
+                "Register address should be a number between 0x0 and 0xf"
+                "r1 = {:#x} r2 = {:#x}".format(r1, r2))
         address_left, address_right = address >> 8, (address & 0xff)
         data = [instruction.opcode,
                 (r1 << 4) | r2, address_left, address_right]
@@ -97,7 +105,11 @@ if __name__ == '__main__':
     start_address = 0xf
     data_triples = []
     for instr in source:
-        dt = to_data_triples(instr, start_address)
+        try:
+            dt = to_data_triples(instr, start_address)
+        except InvalidInstruction as e:
+            print(e)
+            sys.exit(1)
         data_triples.append(dt)
         start_address += dt.count
         start_address += int(start_address % 2 == 0)
