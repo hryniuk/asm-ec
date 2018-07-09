@@ -7,13 +7,41 @@ from src.data_triple import DataTriple
 
 START_ADDRESS = 0xa
 
-OP_CODES = dict(
-    SVC=0x2e,
-    LI=0x40,
+RR_CODES = dict(
+    LR=0x00, LNR=0x01, STR=0x02, SWAPR=0x03, ANDR=0x04, ORR=0x05, RR=0x06,
+    NOTR=0x07, BCSR=0x08, BCRR=0x09, BALR=0x0a, SACR=0x0b, CR=0x0c, CCS=0x0e,
+    MCS=0x0f, AR=0x10, SR=0x11, RSR=0x12, MR=0x13, DR=0x14, RDR=0x15,
+    REMR=0x16, RREMR=0x17, FAR=0x18, FSR=0x19, RFSR=0x1a, FMR=0x1b, FDR=0x1c,
+    RFDR=0x1d, FLOATR=0x1e, FIXR=0x1f,
 )
 
-RS = {0x2e}
-IM = {0x40}
+RS_CODES = dict(
+    L=0x20, LN=0x21, ST=0x22, SWAP=0x23, AND=0x24, OR=0x25, XOR=0x26, NOT=0x27,
+    BCS=0x28, BCR=0x29, BAL=0x2a, SAC=0x2b, C=0x2c, SVC=0x2e, A=0x30, S=0x31,
+    RS=0x32, M=0x33, D=0x34, RD=0x35, REM=0x36, RREM=0x37, FA=0x38, FS=0x39,
+    RFS=0x3a, FM=0x3b, FD=0x3c, RFD=0x3d, FLOAT=0x3e, FIX=0x3f, LA=0x4e,
+    STM=0x6f, FLOOR=0x78, CEIL=0x79, MIN=0x7a, MAX=0x7b, SHIFTL=0x7c,
+    SHIFTC=0x7d, SHIFTA=0x7e, SHIFTR=0x7f,
+)
+
+IM_CODES = dict(
+    LI=0x40, LNI=0x41, ANDI=0x43, ORI=0x45, XORI=0x46, NOTI=0x47, CI=0x4c,
+    AI=0x50, SI=0x51, RSI=0x52, MI=0x53, DI=0x54, RDI=0x55, REMI=0x56,
+    RREMI=0x57, FAI=0x58, FSI=0x59, RFSI=0x5a, FMI=0x5b, FDI=0x5c, RFDI=0x5d,
+    FLOATI=0x5e, FIXI=0x5f,
+)
+
+CH_CODES = dict(
+    LC=0x60, LNC=0x61, STC=0x62, SWAPC=0x63, ANDC=0x64, ORC=0x65, XORC=0x66,
+    NOTC=0x67, SACC=0x6b, CC=0x6c, AC=0x70, SC=0x71, RSC=0x72, MC=0x73, DC=0x74,
+    RDC=0x75, REMC=0x76, RREMC=0x77
+)
+
+OP_CODES = dict()
+OP_CODES.update(RS_CODES)
+OP_CODES.update(RR_CODES)
+OP_CODES.update(IM_CODES)
+OP_CODES.update(CH_CODES)
 
 Instruction = namedtuple('Instruction', ('opcode', 'operands'))
 
@@ -38,7 +66,7 @@ class InvalidInstruction(Exception):
 
 # TODO: rethink parameters
 def to_data_triples(instruction, previous_address=-1):
-    if instruction.opcode in RS:
+    if instruction.opcode in set(RS_CODES.values()):
         r1, address = map(lambda x: int(x, 0), instruction.operands[0].split())
         r2 = int(instruction.operands[1])
         if not (r1 < 0x10 and r2 < 0x10):
@@ -48,7 +76,7 @@ def to_data_triples(instruction, previous_address=-1):
         address_left, address_right = address >> 8, (address & 0xff)
         data = [instruction.opcode,
                 (r1 << 4) | r2, address_left, address_right]
-    elif instruction.opcode in IM:
+    elif instruction.opcode in set(IM_CODES.values()):
         r1, value = map(lambda x: int(x, 0), instruction.operands[0].split())
         data = [instruction.opcode, r1 << 4 | (value & 0xf0000),
                 value & 0xff00,
