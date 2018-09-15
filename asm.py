@@ -101,7 +101,7 @@ def data_triples_to_alf(data_triples):
     alf_lines = []
     try:
         record_line = generate_record(data_triples)
-        assert len(record_line) <= 80
+        # split records into 80 characters long parts
         alf_lines.append(record_line)
     except Exception as e:
         print("{}".format(e))
@@ -133,6 +133,7 @@ if __name__ == '__main__':
     start_address = 0xf
     data_triples = []
     for instr in source:
+        dt = None
         try:
             dt = to_data_triples(instr, start_address)
         except InvalidInstruction as e:
@@ -141,5 +142,4 @@ if __name__ == '__main__':
         data_triples.append(dt)
         start_address += dt.count
         start_address += int(start_address % 2 == 0)
-
     print(data_triples_to_alf(data_triples))
