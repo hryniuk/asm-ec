@@ -5,7 +5,7 @@ from collections import namedtuple
 from typing import List, NewType, Type
 from src.data_triple import DataTriple
 
-START_ADDRESS = 0xa
+START_ADDRESS = 0x40
 
 RR_CODES = dict(
     LR=0x00, LNR=0x01, STR=0x02, SWAPR=0x03, ANDR=0x04, ORR=0x05, RR=0x06,
@@ -130,7 +130,7 @@ if __name__ == '__main__':
 
     assert source is not None
     # TODO: refactor it and write test
-    start_address = 0xf
+    start_address = 0x3f
     data_triples = []
     for instr in source:
         dt = None
