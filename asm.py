@@ -46,14 +46,30 @@ OP_CODES.update(CH_CODES)
 Instruction = namedtuple('Instruction', ('opcode', 'operands'))
 
 
+def strip_comment(line: str) -> str:
+    if '#' in line:
+        return line[:line.index('#')].strip()
+    return line
+
+
+def strip_comments(lines: List[str]) -> List[str]:
+    return [strip_comment(l) for l in lines]
+
+
 def parse_line(line: str) -> Instruction:
     instruction_name, *operands = map(str.strip, line.split(','))
     return Instruction(OP_CODES[instruction_name], operands)
 
 
+def preprocess(lines: List[str]) -> List[str]:
+    without_comments = strip_comments(lines)
+    return without_comments
+
+
 # TODO: rename to read_instructions
 def read_source(file_object) -> List[Instruction]:
-    return list(parse_line(l.strip()) for l in file_object.readlines())
+    raw_lines = preprocess(file_object.readlines())
+    return list(parse_line(l.strip()) for l in raw_lines)
 
 
 class UnsupportedOpCode(Exception):
