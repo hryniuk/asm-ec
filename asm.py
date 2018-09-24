@@ -63,7 +63,8 @@ def parse_line(line: str) -> Instruction:
 
 def preprocess(lines: List[str]) -> List[str]:
     without_comments = strip_comments(lines)
-    return without_comments
+    # TODO: add remove_empty_lines function
+    return [l for l in without_comments if len(l) > 0]
 
 
 # TODO: rename to read_instructions
