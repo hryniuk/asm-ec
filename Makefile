@@ -9,6 +9,7 @@ SOURCEDIR     = source
 BUILDDIR      = build
 
 test:
+	./regression.sh
 	pycodestyle asm.py && pytest
 
 # Put it first so that "make" without argument is like "make help".
