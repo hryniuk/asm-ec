@@ -8,9 +8,19 @@ SPHINXPROJ    = EC-1Assembler
 SOURCEDIR     = source
 BUILDDIR      = build
 
+.PHONY: test
 test:
+	black --check asm.py
+	black --check src
+	black --check tests
 	./regression.sh
-	pycodestyle asm.py && pytest
+	pytest
+
+.PHONY: format
+format:
+	black asm.py
+	black src
+	black tests
 
 # Put it first so that "make" without argument is like "make help".
 help:
