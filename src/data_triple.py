@@ -15,11 +15,12 @@ class DataTriple:
         self.data = data
 
     def __eq__(self, other):
-        return tuple([self.count, self.address, self.data]) \
-               == tuple([other.count, other.address, other.data])
+        return tuple([self.count, self.address, self.data]) == tuple(
+            [other.count, other.address, other.data]
+        )
 
     def __repr__(self):
-        data_str = ''.join(f"{a:02x}" for a in self.data)
+        data_str = "".join(f"{a:02x}" for a in self.data)
         assert len(data_str) % 2 == 0
         return f"{self.count:01x}{self.address:04x}{data_str}"
 
