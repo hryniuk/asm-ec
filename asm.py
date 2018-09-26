@@ -83,23 +83,38 @@ class InvalidInstruction(Exception):
 
 # TODO: rethink parameters
 def to_data_triples(instruction, previous_address=-1):
+    # data contains characters to be written to the EC memory
+    # i.e. data of DataTriple
+    data = None
     if instruction.opcode in set(RS_CODES.values()):
         r1, address = map(lambda x: int(x, 0), instruction.operands[0].split())
         r2 = int(instruction.operands[1])
         if not (r1 < 0x10 and r2 < 0x10):
             raise InvalidInstruction(
-                "Register address should be a number between 0x0 and 0xf"
+                "Register number should be between 0x0 and 0xf"
                 "r1 = {:#x} r2 = {:#x}".format(r1, r2))
         address_left, address_right = address >> 8, (address & 0xff)
         data = [instruction.opcode,
                 (r1 << 4) | r2, address_left, address_right]
     elif instruction.opcode in set(IM_CODES.values()):
         r1, value = map(lambda x: int(x, 0), instruction.operands[0].split())
-        data = [instruction.opcode, r1 << 4 | (value & 0xf0000),
+        if not (r1 < 0x10):
+            raise InvalidInstruction(
+                "Register number should be between 0x0 and 0xf"
+                "r1 = {:#x}".format(r1))
+        data = [instruction.opcode, (r1 << 4) | (value & 0xf0000),
                 value & 0xff00,
                 value & 0xff]
+    elif instruction.opcode in set(RR_CODES.values()):
+        r1, r2 = map(lambda x: int(x, 0), instruction.operands[0].split())
+        if not (r1 < 0x10 and r2 < 0x10):
+            raise InvalidInstruction(
+                "Register number should be between 0x0 and 0xf"
+                "r1 = {:#x} r2 = {:#x}".format(r1, r2))
+        data = [instruction.opcode, (r1 << 4) | r2]
     else:
         raise UnsupportedOpCode(f"{instruction.opcode} is not supported")
+    assert data is not None
     return DataTriple(len(data), previous_address + 1, data)
 
 
