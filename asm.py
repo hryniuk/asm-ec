@@ -198,10 +198,11 @@ def to_data_triples(instruction, previous_address=-1):
             )
         data = [
             instruction.opcode,
-            (r1 << 4) | (value & 0xf0000),
-            value & 0xff00,
+            (r1 << 4) | ((value & 0xf0000) >> 16),
+            (value & 0xff00) >> 8,
             value & 0xff,
         ]
+        print(data)
     elif instruction.opcode in set(RR_CODES.values()):
         r1, r2 = map(lambda x: int(x, 0), instruction.operands[0].split())
         if not (r1 < 0x10 and r2 < 0x10):
