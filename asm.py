@@ -150,6 +150,10 @@ def strip_comments(lines: List[str]) -> List[str]:
     return [strip_comment(l) for l in lines]
 
 
+def remove_empty(lines: List[str]) -> List[str]:
+    return [l for l in lines if len(l.strip()) > 0]
+
+
 def parse_line(line: str) -> Instruction:
     instruction_name, *operands = map(str.strip, line.split(","))
     return Instruction(OP_CODES[instruction_name], operands)
@@ -157,8 +161,8 @@ def parse_line(line: str) -> Instruction:
 
 def preprocess(lines: List[str]) -> List[str]:
     without_comments = strip_comments(lines)
-    # TODO: add remove_empty_lines function
-    return [l for l in without_comments if len(l) > 0]
+    non_empty = remove_empty(without_comments)
+    return non_empty
 
 
 # TODO: rename to read_instructions
@@ -202,7 +206,6 @@ def to_data_triples(instruction, previous_address=-1):
             (value & 0xff00) >> 8,
             value & 0xff,
         ]
-        print(data)
     elif instruction.opcode in set(RR_CODES.values()):
         r1, r2 = map(lambda x: int(x, 0), instruction.operands[0].split())
         if not (r1 < 0x10 and r2 < 0x10):
