@@ -12,5 +12,6 @@ for easm in tests/*.easm; do
         echo "${easm} OK"
     else
         echo "${easm} NOK"
+        exit 1
     fi
 done
