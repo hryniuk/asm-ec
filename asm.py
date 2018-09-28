@@ -166,6 +166,7 @@ def preprocess(lines: List[str]) -> List[str]:
 
 
 # TODO: rename to read_instructions
+# TODO: add data format parser to detect syntax errors
 def read_source(file_object) -> List[Instruction]:
     raw_lines = preprocess(file_object.readlines())
     return list(parse_line(l.strip()) for l in raw_lines)
@@ -263,11 +264,17 @@ if __name__ == "__main__":
     # TODO: refactor it and write test
     start_address = 0x3f
     data_triples = []
+    # TODO: process pair (intruction, source_line)
+    # instead of instruction only to ease debugging
     for instr in source:
         dt = None
         try:
             dt = to_data_triples(instr, start_address)
         except InvalidInstruction as e:
+            print(e)
+            sys.exit(1)
+        except ValueError as e:
+            print("error on instruction {}:".format(instr))
             print(e)
             sys.exit(1)
         data_triples.append(dt)
