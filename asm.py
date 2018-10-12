@@ -16,7 +16,6 @@ RR_CODES = dict(
     ORR=0x05,
     XORR=0x06,
     NOTR=0x07,
-    BCSR=0x08,
     BCRR=0x09,
     BALR=0x0a,
     SACR=0x0b,
@@ -40,6 +39,8 @@ RR_CODES = dict(
     FLOATR=0x1e,
     FIXR=0x1f,
 )
+
+RRM_CODES = dict(BCSR=0x08)
 
 RS_CODES = dict(
     L=0x20,
@@ -133,6 +134,7 @@ CH_CODES = dict(
 
 OP_CODES = dict()
 OP_CODES.update(RS_CODES)
+OP_CODES.update(RRM_CODES)
 OP_CODES.update(RR_CODES)
 OP_CODES.update(IM_CODES)
 OP_CODES.update(CH_CODES)
@@ -185,7 +187,14 @@ def to_data_triples(instruction, previous_address=-1):
     # data contains characters to be written to the EC memory
     # i.e. data of DataTriple
     data = None
-    if instruction.opcode in set(RS_CODES.values()):
+    if instruction.opcode in set(RRM_CODES.values()):
+        m1, r2 = map(lambda x: int(x, 0), instruction.operands[0].split())
+        if not r2 < 0x10:
+            raise InvalidInstruction(
+                "Register number should be between 0x0 and 0xf " "r2 = {:#x}".format(r2)
+            )
+        data = [instruction.opcode, (m1 << 4) | r2]
+    elif instruction.opcode in set(RS_CODES.values()):
         r1, address = map(lambda x: int(x, 0), instruction.operands[0].split())
         r2 = int(instruction.operands[1])
         if not (r1 < 0x10 and r2 < 0x10):
