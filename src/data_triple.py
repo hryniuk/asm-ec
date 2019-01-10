@@ -5,10 +5,10 @@ class InvalidDataTriple(Exception):
 class DataTriple:
     def __init__(self, count, address, data):
         # TODO: throw proper exceptions
-        assert 1 <= count <= 0xff
+        assert 1 <= count <= 0xFF
         assert 0 <= address < 8192
         assert count == len(data)
-        assert all(a <= 0xff for a in data)
+        assert all(a <= 0xFF for a in data)
 
         self.count = count
         self.address = address
