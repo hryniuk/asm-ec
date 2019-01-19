@@ -1,4 +1,6 @@
-# asm-ec [![Build Status](https://travis-ci.com/hryniuk/asm-ec.svg?token=hH6LPCLCyUFneJpS1zdy&branch=master)](https://travis-ci.com/hryniuk/asm-ec)
+# asm-ec
+
+[![Travis CI](https://img.shields.io/travis/hryniuk/asm-ec.svg?style=for-the-badge)](https://travis-ci.org/hryniuk/asm-ec)
 
 Assembler for the [The Educational Computer, Model 1](https://github.com/hryniuk/ec).
 
