@@ -194,7 +194,9 @@ def to_data_triples(instruction, previous_address=-1):
                 "Register number should be between 0x0 and 0xf " "r2 = {:#x}".format(r2)
             )
         data = [instruction.opcode, (m1 << 4) | r2]
-    elif instruction.opcode in set(RS_CODES.values()):
+    elif instruction.opcode in set(RS_CODES.values()) or instruction.opcode in set(
+        CH_CODES.values()
+    ):
         r1, address = map(lambda x: int(x, 0), instruction.operands[0].split())
         r2 = int(instruction.operands[1])
         if not (r1 < 0x10 and r2 < 0x10):
