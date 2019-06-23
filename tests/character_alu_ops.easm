@@ -1,0 +1,56 @@
+LI,0x0 0x05
+LI,0x1 0x01
+LI,0x2 0x05
+LI,0x3 0x03
+LI,0x4 0x08
+LI,0x5 0x02
+
+# r0 r1 r2 r3 r4 r5
+#  5  1  5  3  8  2
+# r1 = r1 + r2 = 1 + 5 = 6
+AC,0x1 0x08,0
+SVC,0x0 0x4,0   # 6
+
+# r0 r1 r2 r3 r4 r5
+#  5  6  5  3  8  2
+# r1 = r1 - r3 = 6 - 3 = 3
+SC,0x1 0x0c,0
+SVC,0x0 0x4,0   # 3
+
+# r0 r1 r2 r3 r4 r5
+#  5  3  5  3  8  2
+# r1 = r2 - r1 = 5 - 3 = 2
+RSC,0x1 0x08,0
+SVC,0x0 0x4,0   # 2
+
+# r0 r1 r2 r3 r4 r5
+#  5  2  5  3  8  2
+# r1 = r1 * r2 = 2 * 5 = 10
+MC,0x1 0x08,0
+SVC,0x0 0x4,0   # 10
+
+# r0 r1 r2 r3 r4 r5
+#  5 10  5  3  8  2
+# r4 = r4 / r5 = 8 / 2 = 4
+DC,0x4 0x14,0
+SVC,0x0 0x10,0   # 4
+
+# r0 r1 r2 r3 r4 r5
+#  5 10  5  3  4  2
+# r2 = r1 / r2 = 10 / 5 = 2
+RDC,0x2 0x4,0
+SVC,0x0 0x8,0   # 2
+
+# r0 r1 r2 r3 r4 r5
+#  5 10  2  3  4  2
+# r1 = r1 % r3 = 10 % 3 = 1
+REMC,0x1 0xc,0
+SVC,0x0 0x4,0   # 1
+
+# r0 r1 r2 r3 r4 r5
+#  5 1  2  3  4  2
+# r2 = r3 % r2 = 3 % 2 = 1
+RREMC,0x2 0xc,0
+SVC,0x0 0x8,0   # 1
+
+# TODO: add tests for logic ops
